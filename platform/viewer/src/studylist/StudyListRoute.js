@@ -98,8 +98,11 @@ function StudyListRoute(props) {
           setStudies(response);
           setSearchStatus({ error: null, isSearchingForStudies: false });
         } catch (error) {
-          console.warn(error);
-          setSearchStatus({ error: true, isFetching: false });
+          console.log(
+            'Error fetching studyList:',
+            JSON.stringify(error, null, 4)
+          );
+          setSearchStatus({ error, isFetching: false });
         }
       };
 
@@ -137,9 +140,7 @@ function StudyListRoute(props) {
     }
   };
 
-  if (searchStatus.error) {
-    return <div>Error: {JSON.stringify(searchStatus.error)}</div>;
-  } else if (studies === [] && !activeModalId) {
+  if (studies === [] && !activeModalId) {
     return <div>Loading...</div>;
   }
 
@@ -246,7 +247,7 @@ function StudyListRoute(props) {
         {/* STUDY LIST OR DROP ZONE? */}
         <StudyList
           isLoading={searchStatus.isSearchingForStudies}
-          hasError={searchStatus.error === true}
+          hasError={searchStatus.error}
           // Rows
           studies={studies}
           onSelectItem={studyInstanceUID => {

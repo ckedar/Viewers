@@ -151,32 +151,45 @@ function StudyList(props) {
          * We should keep our current results visible while we load the new ones.
          */}
         {/* LOADING */}
-        {isLoading && (
-          <tr className="no-hover">
-            <td colSpan={tableMeta.length}>
-              <StudyListLoadingText />
-            </td>
-          </tr>
-        )}
-        {!isLoading && hasError && (
-          <tr className="no-hover">
-            <td colSpan={tableMeta.length}>
-              <div className="notFound">
-                {t('There was an error fetching studies')}
-              </div>
-            </td>
-          </tr>
-        )}
-        {/* EMPTY */}
-        {!isLoading && !studies.length && (
-          <tr className="no-hover">
-            <td colSpan={tableMeta.length}>
-              <div className="notFound">{t('No matching results')}</div>
-            </td>
-          </tr>
-        )}
-        {!isLoading &&
-          studies.map((study, index) => (
+
+        {// prettier-ignore
+        isLoading ? (
+            <tr className="no-hover">
+              <td colSpan={tableMeta.length}>
+                <StudyListLoadingText />
+              </td>
+            </tr>
+          )
+
+          : hasError ? (
+            <tr className="no-hover">
+              <td colSpan={tableMeta.length}>
+                <div className="notFound">
+                  {t('There was an error fetching studies')}
+                </div>
+                <div>
+                  <div>Could not fetch study list from <a href={hasError.url} target="xyz">{hasError.url}</a></div>
+                  <div>Received status: {hasError.status}</div>
+                  {hasError.status === 0 && (
+                    <>
+                      <div>Either the server is un-reachable or CORS is not setup properly</div>
+                      <div>Click on link above. If it shows some output then it is a CORS issue.</div>
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          )
+
+          : studies.length == 0 ? (
+            <tr className="no-hover">
+              <td colSpan={tableMeta.length}>
+                <div className="notFound">{t('No matching results')}</div>
+              </td>
+            </tr>
+          )
+
+          : studies.map((study, index) => (
             <TableRow
               key={`${study.StudyInstanceUID}-${index}`}
               onClick={StudyInstanceUID => handleSelectItem(StudyInstanceUID)}
